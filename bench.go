@@ -18,10 +18,13 @@ var (
 )
 
 func bench(b *testing.B, requests []string, rt http.Handler) {
+	b.ReportAllocs()
 	w := httptest.NewRecorder()
+	r, _ := http.NewRequest(http.MethodGet, "/", nil)
 	for i := 0; i < b.N; i++ {
-		for _, r := range requests {
-			rt.ServeHTTP(w, httptest.NewRequest(http.MethodGet, r, nil))
+		for _, path := range requests {
+			r.URL.Path = path
+			rt.ServeHTTP(w, r)
 		}
 	}
 }
