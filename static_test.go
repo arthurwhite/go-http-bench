@@ -37,6 +37,10 @@ func BenchmarkStaticFastRoute(b *testing.B) {
 	bench(b, staticRequests, setFastRoute(staticRoutes))
 }
 
+func BenchmarkStaticGorillaMux(b *testing.B) {
+	bench(b, staticRequests, setGorillaMux(staticRoutes))
+}
+
 func BenchmarkStaticGowwwRouter(b *testing.B) {
 	bench(b, staticRequests, setGowwwRouter(staticRoutes))
 }

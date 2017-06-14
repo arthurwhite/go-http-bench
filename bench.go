@@ -2,6 +2,7 @@ package bench
 
 import (
 	"github.com/DATA-DOG/fastroute"
+	"github.com/gorilla/mux"
 	"github.com/gowww/router"
 	"github.com/julienschmidt/httprouter"
 	"github.com/pressly/chi"
@@ -47,15 +48,23 @@ func setFastRoute(reqRoutes []string) http.Handler {
 		routes = append(routes, fastroute.New(r, handlerFunc))
 	}
 	var tree = map[string]fastroute.Router{
-		"GET":    fastroute.Chain(routes...),
-		"POST":   fastroute.Chain(routes...),
-		"PUT":    fastroute.Chain(routes...),
-		"PATCH":  fastroute.Chain(routes...),
-		"DELETE": fastroute.Chain(routes...),
+		http.MethodGet:    fastroute.Chain(routes...),
+		http.MethodPost:   fastroute.Chain(routes...),
+		http.MethodPut:    fastroute.Chain(routes...),
+		http.MethodPatch:  fastroute.Chain(routes...),
+		http.MethodDelete: fastroute.Chain(routes...),
 	}
 	return fastroute.RouterFunc(func(r *http.Request) http.Handler {
 		return tree[r.Method] // fastroute.Router is also http.Handler
 	})
+}
+
+func setGorillaMux(reqRoutes []string) http.Handler {
+	rt := mux.NewRouter()
+	for _, r := range reqRoutes {
+		rt.Handle(r, handler).Methods(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete)
+	}
+	return rt
 }
 
 func setGowwwRouter(reqRoutes []string) http.Handler {

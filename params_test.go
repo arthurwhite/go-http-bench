@@ -3,11 +3,18 @@ package bench
 import "testing"
 
 var (
-	paramsRoutes = []string{
+	paramsRoutesColon = []string{
 		"/item/:page",
 		"/user/:item",
 		"/users/:id/carriage",
 		"/users/:id/car",
+	}
+
+	paramsRoutesCurlyBracket = []string{
+		"/item/{page}",
+		"/user/{item}",
+		"/users/{id}/carriage",
+		"/users/{id}/car",
 	}
 
 	paramsRequests = []string{
@@ -20,17 +27,21 @@ var (
 )
 
 func BenchmarkParamsChi(b *testing.B) {
-	bench(b, paramsRequests, setChi(paramsRoutes))
+	bench(b, paramsRequests, setChi(paramsRoutesColon))
 }
 
 func BenchmarkParamsFastRoute(b *testing.B) {
-	bench(b, paramsRequests, setFastRoute(paramsRoutes))
+	bench(b, paramsRequests, setFastRoute(paramsRoutesColon))
+}
+
+func BenchmarkParamsGorillaMux(b *testing.B) {
+	bench(b, staticRequests, setGorillaMux(paramsRoutesCurlyBracket))
 }
 
 func BenchmarkParamsGowwwRouter(b *testing.B) {
-	bench(b, paramsRequests, setGowwwRouter(paramsRoutes))
+	bench(b, paramsRequests, setGowwwRouter(paramsRoutesColon))
 }
 
 func BenchmarkParamsHTTPRouter(b *testing.B) {
-	bench(b, paramsRequests, setHTTPRouter(paramsRoutes))
+	bench(b, paramsRequests, setHTTPRouter(paramsRoutesColon))
 }
